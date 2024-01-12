@@ -633,8 +633,12 @@ static void CG_Portal( centity_t *cent )
 
 	// negating this tends to get the directions like they want
 	// we really should have a camera roll value
-	VectorSubtract( vec3_origin, ent.axis[ 1 ], ent.axis[ 1 ] );
+	vec3_t dir;
+	ByteToDir( s1->eventParm, dir );
 
+	// VectorCopy( dir, ent.axis[0] );
+	CrossProduct( ent.axis[0], axisDefault[2], ent.axis[1] );
+	VectorSubtract( vec3_origin, ent.axis[ 1 ], ent.axis[ 1 ] );
 	CrossProduct( ent.axis[ 0 ], ent.axis[ 1 ], ent.axis[ 2 ] );
 	ent.reType = refEntityType_t::RT_PORTALSURFACE;
 	ent.oldframe = s1->misc;
