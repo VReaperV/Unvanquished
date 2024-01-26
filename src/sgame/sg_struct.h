@@ -131,6 +131,8 @@ struct gentity_t
 	bool     inuse;
 	bool     freeAfterEvent;
 
+	bool preserveRoll;
+
 	int          flags; // FL_* variables
 
 	//entity creation time, i.e. when a building was build or a missile was fired (for diminishing missile damage)

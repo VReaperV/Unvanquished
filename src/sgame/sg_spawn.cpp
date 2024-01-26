@@ -160,6 +160,7 @@ enum fieldType_t
   F_3D_VECTOR,
   F_4D_VECTOR,
   F_YAW,
+  F_ROLL,
   F_SOUNDINDEX
 };
 
@@ -206,6 +207,7 @@ static const fieldDescriptor_t fields[] =
 	{ "period",              FOFS( mapEntity.config.period ),        F_TIME,       ENT_V_UNCLEAR, nullptr },
 	{ "radius",              FOFS( mapEntity.activatedPosition ),    F_3D_VECTOR,  ENT_V_UNCLEAR, nullptr }, // What's with the variable abuse everytime?
 	{ "random",              FOFS( mapEntity.config.wait.variance ), F_FLOAT,      ENT_V_TMPNAME, "wait" },
+	{ "roll",                FOFS( s.angles ),                       F_ROLL,       ENT_V_UNCLEAR, nullptr },
 	{ "replacement",         FOFS( mapEntity.shaderReplacement ),    F_STRING,     ENT_V_UNCLEAR, nullptr },
 	{ "shader",              FOFS( mapEntity.shaderKey ),            F_STRING,     ENT_V_UNCLEAR, nullptr },
 	{ "sound1to2",           FOFS( mapEntity.sound1to2 ),            F_SOUNDINDEX, ENT_V_UNCLEAR, nullptr },
@@ -732,6 +734,9 @@ static void G_ParseField( const char *key, const char *rawString, gentity_t *ent
 
 			( ( float * ) entityDataField ) [ 0 ] = tmpFloatData[ 0 ];
 			( ( float * ) entityDataField ) [ 1 ] = tmpFloatData[ 1 ];
+			if ( !Q_stricmp( key, "angles" ) && entity->preserveRoll ) { // HACK: "roll" keyword must overwrite "angles"
+				break;                                                   // Proper fix requires rewriting entity parsing
+			}
 			( ( float * ) entityDataField ) [ 2 ] = tmpFloatData[ 2 ];
 			break;
 
@@ -756,6 +761,11 @@ static void G_ParseField( const char *key, const char *rawString, gentity_t *ent
 			( ( float * ) entityDataField ) [ PITCH ] = 0;
 			( ( float * ) entityDataField ) [ YAW   ] = atof( rawString );
 			( ( float * ) entityDataField ) [ ROLL  ] = 0;
+			break;
+
+		case F_ROLL:
+			( ( float * ) entityDataField ) [ ROLL ] = atof( rawString );
+			entity->preserveRoll = true;
 			break;
 
 		case F_SOUNDINDEX:
