@@ -3,7 +3,7 @@
 	url = https://github.com/Unvanquished/recastnavigation.git
 [submodule "daemon"]
 	path = daemon
-	url = https://github.com/DaemonEngine/Daemon.git
+	url = https://github.com/VReaperV/Daemon.git
 [submodule "libs/RmlUi"]
 	path = libs/RmlUi
 	url = https://github.com/Unvanquished/RmlUi.git
