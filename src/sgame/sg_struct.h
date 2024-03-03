@@ -138,6 +138,7 @@ struct gentity_t
 
 	// These formerly all used a field named "active" and are now split such that it gets easier
 	// to convert them to CBSE component members.
+	bool medistationIsHealing;
 	bool bodyStartedSinking;
 	bool shaderActive;
 
@@ -185,7 +186,7 @@ struct gentity_t
 	 */
 	float        momentumEarned;
 
-	GentityRef   target; // target of trapper, hive, rocketpod, builder's +deconstruct
+	GentityRef   target; // target of trapper, medistation, hive, rocketpod, builder's +deconstruct
 
 	/* path chaining, not unlike the target/tracker relationship */
 	gentity_t    *nextPathSegment;

@@ -67,6 +67,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define CGAME_CHAR_WIDTH               32
 #define CGAME_CHAR_HEIGHT              48
 
+#define MAX_LOADING_TEXT_LENGTH        64
+
 #define MAX_MINIMAP_ZONES              32
 
 enum footstep_t
@@ -1245,7 +1247,7 @@ struct cg_t
 	/* loading */
 	std::string mapLongName;
 	std::string mapAuthors;
-	std::string loadingText;
+	char                    loadingText[ MAX_LOADING_TEXT_LENGTH ];
 	float                   loadingFraction; // loading percentages
 	float                   mediaLoadingFraction;
 	float                   buildableLoadingFraction;

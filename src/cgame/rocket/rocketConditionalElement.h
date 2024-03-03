@@ -41,7 +41,7 @@ Maryland 20850 USA.
 class RocketConditionalElement : public Rml::Element
 {
 public:
-	RocketConditionalElement( const std::string &tag ) : Rml::Element( tag ), condition( NOT_EQUAL ), dirty_value( false ) {}
+	RocketConditionalElement( const Rml::String &tag ) : Rml::Element( tag ), condition( NOT_EQUAL ), dirty_value( false ) {}
 
 	virtual void OnAttributeChange( const Rml::ElementAttributes &changed_attributes )
 	{
@@ -50,25 +50,27 @@ public:
 		it = changed_attributes.find( "cvar" );
 		if ( it != changed_attributes.end() )
 		{
-			cvar = it->second.Get<std::string>();
+			cvar = it->second.Get<Rml::String>();
 			cvar_value = Cvar::GetValue( cvar.c_str() ).c_str();
-			dirty_value = true;
 		}
 
 		it = changed_attributes.find( "condition" );
 		if ( it != changed_attributes.end() )
 		{
-			ParseCondition( it->second.Get<std::string>() );
+			ParseCondition( it->second.Get<Rml::String>() );
 		}
 
 		it = changed_attributes.find( "value" );
-		if ( it != changed_attributes.end() )
+		if ( it !=  changed_attributes.end() )
 		{
-			std::string val = it->second.Get<std::string>();
-			try
+			char *end = nullptr;
+			// Check if float
+			float floatVal = strtof( it->second.Get<Rml::String>().c_str(), &end );
+
+			// Is either an integer or float
+			if ( end )
 			{
-				float floatVal = std::stof( val );
-				// Is either an integer or float
+				// is integer
 				if ( static_cast< int >( floatVal ) == floatVal )
 				{
 					value = static_cast< int >( floatVal );
@@ -78,10 +80,11 @@ public:
 					value = floatVal;
 				}
 			}
-			// Failed conversion means it's a string.
-			catch ( const std::invalid_argument& )
+
+			// Is a string
+			else
 			{
-				value = it->second.Get<std::string>();
+				value = it->second;
 			}
 
 			dirty_value = true;
@@ -127,7 +130,7 @@ private:
 		NOT_EQUAL
 	};
 
-	void ParseCondition( const std::string& str )
+	void ParseCondition( const Rml::String& str )
 	{
 		if ( str == "==" )
 		{
@@ -178,7 +181,7 @@ private:
 				Compare( flt, value.Get<float>() );
 			}
 			default:
-				Compare( str, value.Get< std::string >().c_str() );
+				Compare( str, value.Get< Rml::String >().c_str() );
 		}
 	}
 
@@ -198,8 +201,8 @@ private:
 		return 0;
 	}
 
-	std::string cvar;
-	std::string cvar_value;
+	Rml::String cvar;
+	Rml::String cvar_value;
 	Condition condition;
 	Rml::Variant value;
 	bool dirty_value;

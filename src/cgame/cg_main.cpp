@@ -443,7 +443,7 @@ static void CG_UpdateLoadingProgress( int step, const char *label, const char* l
 {
 	cg.loadingFraction = ( 1.0f * step ) / LOAD_DONE;
 
-	cg.loadingText = loadingText;
+	Q_strncpyz( cg.loadingText, loadingText, sizeof( cg.loadingText ) );
 
 	Log::Debug( "CG_Init: %d%% %s.", static_cast<int>( 100 * cg.loadingFraction ), label );
 
@@ -1109,7 +1109,7 @@ static void GenerateNavmeshes()
 	const std::string message = _("Generating bot navigation meshes");
 	cg.navmeshLoadingFraction = 0;
 	cg.loadingNavmesh = true;
-	cg.loadingText = message;
+	Q_strncpyz( cg.loadingText, message.c_str(), sizeof(cg.loadingText) );
 	trap_UpdateScreen();
 
 	NavmeshGenerator navgen;
@@ -1120,8 +1120,8 @@ static void GenerateNavmeshes()
 	float classesTotal = classesCompleted + missing.size();
 	for ( class_t species : missing )
 	{
-		cg.loadingText =
-			Str::Format( "%s — %s", message, BG_ClassModelConfig( species )->humanName );
+		std::string message2 = Str::Format( "%s — %s", message, BG_ClassModelConfig( species )->humanName );
+		Q_strncpyz( cg.loadingText, message2.c_str(), sizeof(cg.loadingText) );
 		cg.loadingFraction = classesCompleted / classesTotal;
 		trap_UpdateScreen();
 
