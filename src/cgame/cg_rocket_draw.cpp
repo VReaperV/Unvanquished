@@ -517,71 +517,39 @@ private:
 	int clips_;
 };
 
-
-static const int FPS_FRAMES = 20;
-
 class FpsHudElement : public TextHudElement
 {
 public:
 	FpsHudElement( const Rml::String& tag )
 			: TextHudElement( tag, ELEMENT_ALL ),
-			  shouldShowFps_( true ),
-			  index_(0),
-			  previous_(0) {}
+			  showingFps_( false ),
+			  lastFrame_( 0 ),
+			  fps_( 0 ) {}
 
 	void DoOnUpdate() override
 	{
-		int        i, total;
-		int        fps;
-		int        t, frameTime;
-
-		if ( !cg_drawFPS.Get() && shouldShowFps_ )
-		{
-			shouldShowFps_ = false;
-			SetText( "" );
-			return;
-		} else if ( !shouldShowFps_ )
-		{
-			shouldShowFps_ = true;
-		}
-
 		// don't use serverTime, because that will be drifting to
 		// correct for Internet lag changes, timescales, timedemos, etc.
-		t = trap_Milliseconds();
-		frameTime = t - previous_;
-		previous_ = t;
+		int t = trap_Milliseconds();
+		Util::UpdateFPSCounter( 1.0f, t - lastFrame_, fps_ );
+		lastFrame_ = t;
 
-		previousTimes_[ index_ % FPS_FRAMES ] = frameTime;
-		index_++;
-
-		if ( index_ > FPS_FRAMES )
+		if ( cg_drawFPS.Get() )
 		{
-			// average multiple frames together to smooth changes out a bit
-			total = 0;
-
-			for ( i = 0; i < FPS_FRAMES; i++ )
-			{
-				total += previousTimes_[ i ];
-			}
-
-			if ( !total )
-			{
-				total = 1;
-			}
-
-			fps = 1000 * FPS_FRAMES / total;
+			SetText( Str::Format("%.0f", fps_) );
+			showingFps_ = true;
 		}
-
-		else
-			fps = 0;
-
-		SetText( va( "%d", fps ) );
+		else if ( showingFps_ )
+		{
+			SetText( "" );
+			showingFps_ = false;
+		}
 	}
+
 private:
-	bool shouldShowFps_;
-	int previousTimes_[ FPS_FRAMES ];
-	int index_;
-	int previous_;
+	bool showingFps_;
+	int lastFrame_;
+	float fps_;
 };
 
 #define CROSSHAIR_INDICATOR_HITFADE 500
@@ -590,7 +558,7 @@ class CrosshairIndicatorHudElement : public HudElement
 {
 public:
 	CrosshairIndicatorHudElement( const Rml::String& tag ) :
-			HudElement( tag, ELEMENT_BOTH, true ),
+			HudElement( tag, ELEMENT_GAME, true ),
 			color_( Color::White ) {}
 
 	void OnPropertyChange( const Rml::PropertyIdSet& changed_properties ) override
@@ -698,16 +666,35 @@ private:
 class CrosshairHudElement : public HudElement {
 public:
 	CrosshairHudElement( const Rml::String& tag ) :
-			HudElement( tag, ELEMENT_BOTH, true ),
-			color_( Color::White ) {
+			HudElement( tag, ELEMENT_GAME, true ),
+			// Use as a sentinel value to denote that no weapon is
+			// explicitly set.
+			weapon_( WP_NUM_WEAPONS ) {
 	}
 
-	void OnPropertyChange( const Rml::PropertyIdSet& changed_properties ) override
+	void OnAttributeChange( const Rml::ElementAttributes& changed_attributes ) override
 	{
-		HudElement::OnPropertyChange( changed_properties );
-		if ( changed_properties.Contains( Rml::PropertyId::Color ) )
+		HudElement::OnAttributeChange( changed_attributes );
+		// If we are not in game, then don't bother looking up weapon info, since it's not loaded.
+		if ( rocketInfo.cstate.connState != connstate_t::CA_ACTIVE )
 		{
-			GetColor( "color", color_ );
+			return;
+		}
+		// If we have a weapon attribute, then *always* display the crosshair for that weapon, regardless
+		// of team or spectator state.
+		auto it = changed_attributes.find( "weapon" );
+		if ( it != changed_attributes.end() )
+		{
+			auto weaponName = it->second.Get<std::string>();
+			auto wa = BG_WeaponByName( weaponName.c_str() );
+			if ( wa == nullptr || wa->number == WP_NONE )
+			{
+				Log::Warn( "Invalid forced crosshair weapon: %s", weaponName );
+			}
+			else
+			{
+				weapon_ = wa->number;
+			}
 		}
 	}
 
@@ -720,32 +707,42 @@ public:
 		weaponInfo_t *wi;
 		weapon_t     weapon;
 
-		weapon = BG_GetPlayerWeapon( &cg.snap->ps );
-
-		if ( cg_drawCrosshair.Get() == CROSSHAIR_ALWAYSOFF )
+		if ( weapon_ == WP_NUM_WEAPONS )
 		{
-			return;
+			weapon = BG_GetPlayerWeapon( &cg.snap->ps );
+		}
+		else
+		{
+			weapon = weapon_;
 		}
 
-		if ( cg_drawCrosshair.Get() == CROSSHAIR_RANGEDONLY &&
-			!BG_Weapon( weapon )->longRanged )
+		if ( weapon_ == WP_NUM_WEAPONS )
 		{
-			return;
-		}
+			if ( cg_drawCrosshair.Get() == CROSSHAIR_ALWAYSOFF )
+			{
+				return;
+			}
 
-		if ( cg.snap->ps.persistant[ PERS_SPECSTATE ] != SPECTATOR_NOT )
-		{
-			return;
-		}
+			if ( cg_drawCrosshair.Get() == CROSSHAIR_RANGEDONLY &&
+				!BG_Weapon( weapon )->longRanged )
+			{
+				return;
+			}
 
-		if ( cg.renderingThirdPerson )
-		{
-			return;
-		}
+			if ( cg.snap->ps.persistant[ PERS_SPECSTATE ] != SPECTATOR_NOT )
+			{
+				return;
+			}
 
-		if ( cg.snap->ps.pm_type == PM_INTERMISSION )
-		{
-			return;
+			if ( cg.renderingThirdPerson )
+			{
+				return;
+			}
+
+			if ( cg.snap->ps.pm_type == PM_INTERMISSION )
+			{
+				return;
+			}
 		}
 
 		GetElementRect( rect );
@@ -814,9 +811,8 @@ public:
 			trap_R_ClearColor();
 		}
 	}
-
-private:
-	Color::Color color_;
+	private:
+	weapon_t weapon_;
 };
 
 #define SPEEDOMETER_NUM_SAMPLES 4096
@@ -3583,7 +3579,7 @@ static void CG_Rocket_DrawVote_internal( team_t team )
 			"^7[^2%s^7] [check]: %i [^1%s^7] [cross]: %i\n"
 			"^%iEnds in ^%i%i ^%iseconds\n",
 			team == TEAM_NONE ? "" : "TEAM", voteString,
-			cgs.voteCaller[ team ], yeskey, cgs.voteYes[ team ], nokey, cgs.voteNo[ team ], 
+			cgs.voteCaller[ team ], yeskey, cgs.voteYes[ team ], nokey, cgs.voteNo[ team ],
 			timerColor, timerColor2, sec, timerColor );
 
 	Rocket_SetInnerRML( s.c_str(), RP_EMOTICONS );
@@ -3637,7 +3633,7 @@ static void CG_Rocket_DrawProgressValue()
 
 static void CG_Rocket_DrawLoadingText()
 {
-	Rocket_SetInnerRML( cg.loadingText, 0 );
+	Rocket_SetInnerRML( cg.loadingText.c_str(), 0 );
 }
 
 static void CG_Rocket_DrawLevelAuthors()
