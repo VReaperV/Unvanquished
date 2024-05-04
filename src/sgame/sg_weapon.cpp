@@ -1630,6 +1630,10 @@ void G_FireWeapon( gentity_t *self, weapon_t weapon, weaponMode_t weaponMode )
 					FireShotgun( self );
 					break;
 
+				case WP_SSG:
+					FireShotgun( self );
+					break;
+
 				case WP_CHAINGUN:
 					FireBullet( self, CHAINGUN_SPREAD, (float)CHAINGUN_DMG, MOD_CHAINGUN, false );
 					break;
@@ -1644,6 +1648,10 @@ void G_FireWeapon( gentity_t *self, weapon_t weapon, weaponMode_t weaponMode )
 
 				case WP_MASS_DRIVER:
 					FireBullet( self, 0.f, (float)MDRIVER_DMG, MOD_MDRIVER, DAMAGE_KNOCKBACK );
+					break;
+
+				case WP_MASSIVE_DRIVER:
+					FireBullet( self, 0.f, ( float ) MASSIVE_DRIVER_DMG, MOD_MASSIVE_DRIVER, DAMAGE_KNOCKBACK );
 					break;
 
 				case WP_LUCIFER_CANNON:

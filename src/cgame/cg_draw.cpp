@@ -336,6 +336,7 @@ static void CG_Draw2D()
 		switch ( cg.predictedPlayerState.weapon )
 		{
 			case WP_MASS_DRIVER:
+			case WP_MASSIVE_DRIVER:
 				shader = cgs.media.sniperScopeShader;
 				break;
 			case WP_LAS_GUN:

@@ -1345,8 +1345,10 @@ static const char* WeaponDamage( weapon_t weapon )
 		case WP_MACHINEGUN: return "10";
 		case WP_PAIN_SAW: return "90";
 		case WP_SHOTGUN: return "40";
+		case WP_SSG: return "80";
 		case WP_LAS_GUN: return "30";
 		case WP_MASS_DRIVER: return "50";
+		case WP_MASSIVE_DRIVER: return "100";
 		case WP_CHAINGUN: return "60";
 		case WP_FLAMER: return "70";
 		case WP_PULSE_RIFLE: return "70";
@@ -1363,8 +1365,10 @@ static const char* WeaponRange( weapon_t weapon )
 		case WP_MACHINEGUN: return "75";
 		case WP_PAIN_SAW: return "10";
 		case WP_SHOTGUN: return "30";
+		case WP_SSG: return "30";
 		case WP_LAS_GUN: return "100";
 		case WP_MASS_DRIVER: return "100";
+		case WP_MASSIVE_DRIVER: return "100";
 		case WP_CHAINGUN: return "50";
 		case WP_FLAMER: return "25";
 		case WP_PULSE_RIFLE: return "80";
@@ -1381,8 +1385,10 @@ static const char* WeaponRateOfFire( weapon_t weapon )
 		case WP_MACHINEGUN: return "70";
 		case WP_PAIN_SAW: return "100";
 		case WP_SHOTGUN: return "100";
+		case WP_SSG: return "100";
 		case WP_LAS_GUN: return "40";
 		case WP_MASS_DRIVER: return "20";
+		case WP_MASSIVE_DRIVER: return "10";
 		case WP_CHAINGUN: return "80";
 		case WP_FLAMER: return "70";
 		case WP_PULSE_RIFLE: return "70";

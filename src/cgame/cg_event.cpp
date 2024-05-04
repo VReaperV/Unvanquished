@@ -47,11 +47,13 @@ static const struct {
 	// Icon            Envkill Assist? (Team)
 	{ "☠",             false, false, TEAM_NONE   }, // unknown
 	{ "[shotgun]",     false, true,  TEAM_HUMANS },
+	{ "[shotgun]",     false, true,  TEAM_HUMANS },
 	{ "[blaster]",     false, true,  TEAM_HUMANS },
 	{ "[painsaw]",     false, true,  TEAM_HUMANS },
 	{ "[rifle]",       false, true,  TEAM_HUMANS },
 	{ "[chaingun]",    false, true,  TEAM_HUMANS },
 	{ "[prifle]",      false, true,  TEAM_HUMANS },
+	{ "[mdriver]",     false, true,  TEAM_HUMANS },
 	{ "[mdriver]",     false, true,  TEAM_HUMANS },
 	{ "[lasgun]",      false, true,  TEAM_HUMANS },
 	{ "[lcannon]",     false, true,  TEAM_HUMANS },
@@ -410,6 +412,11 @@ static void CG_Obituary( entityState_t *ent )
 				messageAssisted = G_( "%s%s ^*was gunned down by %s%s%s^*; %s%s%s^* assisted" );
 				break;
 
+			case MOD_SSG:
+				message = G_( "%s%s ^*was gunned down by %s%s%s" );
+				messageAssisted = G_( "%s%s ^*was gunned down by %s%s%s^*; %s%s%s^* assisted" );
+				break;
+
 			case MOD_PRIFLE:
 				message = G_( "%s%s ^*was seared by %s%s%s^*'s pulse blast" );
 				messageAssisted = G_( "%s%s ^*was seared by %s%s%s^*'s pulse blast; %s%s%s^* assisted" );
@@ -418,6 +425,12 @@ static void CG_Obituary( entityState_t *ent )
 			case MOD_MDRIVER:
 				message = G_( "%s%s ^*was sniped by %s%s%s" );
 				messageAssisted = G_( "%s%s ^*was sniped by %s%s%s^*; %s%s%s^* assisted" );
+				break;
+
+
+			case MOD_MASSIVE_DRIVER:
+				message = G_( "%s%s ^*was MASSIVELY DRIVEN by %s%s%s" );
+				messageAssisted = G_( "%s%s ^*was MASSIVELY DRIVEN by %s%s%s^*; %s%s%s^* assisted" );
 				break;
 
 			case MOD_LASGUN:

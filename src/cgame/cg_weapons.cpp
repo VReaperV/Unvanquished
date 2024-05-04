@@ -583,7 +583,9 @@ static bool CG_ParseWeaponFile( const char *filename, int weapon, weaponInfo_t *
 						DAEMON_FALLTHROUGH;
 					case WP_MACHINEGUN:
 					case WP_SHOTGUN:
+					case WP_SSG:
 					case WP_MASS_DRIVER:
+					case WP_MASSIVE_DRIVER:
 					case WP_PULSE_RIFLE:
 					case WP_BLASTER:
 					case WP_PAIN_SAW:
@@ -668,7 +670,9 @@ static bool CG_ParseWeaponFile( const char *filename, int weapon, weaponInfo_t *
 						DAEMON_FALLTHROUGH;
 					case WP_MACHINEGUN:
 					case WP_SHOTGUN:
+					case WP_SSG:
 					case WP_MASS_DRIVER:
+					case WP_MASSIVE_DRIVER:
 					case WP_PULSE_RIFLE:
 					case WP_BLASTER:
 					case WP_PAIN_SAW:

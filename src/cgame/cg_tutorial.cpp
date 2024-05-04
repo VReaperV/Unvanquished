@@ -413,6 +413,7 @@ static void CG_HumanText( char *text, playerState_t *ps )
 			case WP_BLASTER:
 			case WP_MACHINEGUN:
 			case WP_SHOTGUN:
+			case WP_SSG:
 			case WP_LAS_GUN:
 			case WP_CHAINGUN:
 			case WP_PULSE_RIFLE:
@@ -425,6 +426,7 @@ static void CG_HumanText( char *text, playerState_t *ps )
 				break;
 
 			case WP_MASS_DRIVER:
+			case WP_MASSIVE_DRIVER:
 				Q_strcat( text, MAX_TUTORIAL_TEXT,
 				          va( _( "Press %s to fire the %s." ),
 				              CG_KeyNameForCommand( "+attack" ),

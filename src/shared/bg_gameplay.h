@@ -352,6 +352,11 @@ extern int   SHOTGUN_RANGE;
 extern int   SHOTGUN_PELLETS;
 extern int   SHOTGUN_SPREAD;
 
+extern int   SSG_DMG;
+extern int   SSG_RANGE;
+extern int   SSG_PELLETS;
+extern int   SSG_SPREAD;
+
 extern int   LASGUN_DAMAGE;
 
 extern int   MDRIVER_DMG;
@@ -378,6 +383,8 @@ extern int   LCANNON_CHARGE_TIME_MAX;
 extern int   LCANNON_CHARGE_TIME_MIN;
 extern int   LCANNON_CHARGE_TIME_WARN;
 extern int   LCANNON_CHARGE_AMMO;
+
+extern int   MASSIVE_DRIVER_DMG;
 
 /*
  * HUMAN upgrades

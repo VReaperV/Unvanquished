@@ -147,8 +147,10 @@ static void CG_Rocket_DFGWeaponDamage( int handle, const char *data )
 		case WP_MACHINEGUN: width = 10; break;
 		case WP_PAIN_SAW: width = 90; break;
 		case WP_SHOTGUN: width = 40; break;
+		case WP_SSG: width = 80; break;
 		case WP_LAS_GUN: width = 30; break;
 		case WP_MASS_DRIVER: width = 50; break;
+		case WP_MASSIVE_DRIVER: width = 100; break;
 		case WP_CHAINGUN: width = 60; break;
 		case WP_FLAMER: width = 70; break;
 		case WP_PULSE_RIFLE: width = 70; break;
@@ -170,8 +172,10 @@ static void CG_Rocket_DFGWeaponRateOfFire( int handle, const char *data )
 		case WP_MACHINEGUN: width = 70; break;
 		case WP_PAIN_SAW: width = 100; break;
 		case WP_SHOTGUN: width = 100; break;
+		case WP_SSG: width = 10; break;
 		case WP_LAS_GUN: width = 40; break;
 		case WP_MASS_DRIVER: width = 20; break;
+		case WP_MASSIVE_DRIVER: width = 5; break;
 		case WP_CHAINGUN: width = 80; break;
 		case WP_FLAMER: width = 70; break;
 		case WP_PULSE_RIFLE: width = 70; break;
@@ -193,8 +197,10 @@ static void CG_Rocket_DFGWeaponRange( int handle, const char *data )
 		case WP_MACHINEGUN: width = 75; break;
 		case WP_PAIN_SAW: width = 10; break;
 		case WP_SHOTGUN: width = 30; break;
+		case WP_SSG: width = 25; break;
 		case WP_LAS_GUN: width = 100; break;
 		case WP_MASS_DRIVER: width = 100; break;
+		case WP_MASSIVE_DRIVER: width = 100; break;
 		case WP_CHAINGUN: width = 50; break;
 		case WP_FLAMER: width = 25; break;
 		case WP_PULSE_RIFLE: width = 80; break;

@@ -1506,6 +1506,7 @@ static void SetBehaviorTreeDefines()
 	D( WP_MACHINEGUN );
 	D( WP_PAIN_SAW );
 	D( WP_SHOTGUN );
+	D( WP_SSG );
 	D( WP_LAS_GUN );
 	D( WP_MASS_DRIVER );
 	D( WP_CHAINGUN );

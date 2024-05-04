@@ -503,6 +503,9 @@ float BotGetEnemyPriority( gentity_t *self, gentity_t *ent )
 			case WP_LUCIFER_CANNON:
 				enemyScore = 1.0;
 				break;
+			case WP_MASSIVE_DRIVER:
+				enemyScore = 1.5;
+				break;
 			default:
 				enemyScore = 0.5;
 				break;

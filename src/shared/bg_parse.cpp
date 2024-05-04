@@ -142,9 +142,16 @@ int   SHOTGUN_SPREAD;
 int   SHOTGUN_DMG;
 int   SHOTGUN_RANGE;
 
+int   SSG_PELLETS;
+int   SSG_SPREAD;
+int   SSG_DMG;
+int   SSG_RANGE;
+
 int   LASGUN_DAMAGE;
 
 int   MDRIVER_DMG;
+
+int   MASSIVE_DRIVER_DMG;
 
 int   CHAINGUN_SPREAD;
 int   CHAINGUN_DMG;
@@ -264,6 +271,8 @@ static configVar_t bg_configVars[] =
 
 	{"w_lgun_damage", INTEGER, false, &LASGUN_DAMAGE },
 
+	{"w_massivedriver_damage", INTEGER, false, &MASSIVE_DRIVER_DMG },
+
 	{"w_mdriver_damage", INTEGER, false, &MDRIVER_DMG },
 
 	{"w_prifle_speed", INTEGER, false, &PRIFLE_SPEED },
@@ -280,6 +289,11 @@ static configVar_t bg_configVars[] =
 	{"w_shotgun_pellets", INTEGER, false, &SHOTGUN_PELLETS },
 	{"w_shotgun_range", INTEGER, false, &SHOTGUN_RANGE },
 	{"w_shotgun_spread", INTEGER, false, &SHOTGUN_SPREAD },
+
+	{ "w_supershotgun_damage", INTEGER, false, &SSG_DMG },
+	{ "w_supershotgun_pellets", INTEGER, false, &SSG_PELLETS },
+	{ "w_supershotgun_range", INTEGER, false, &SSG_RANGE },
+	{ "w_supershotgun_spread", INTEGER, false, &SSG_SPREAD },
 };
 
 static const size_t bg_numConfigVars = ARRAY_LEN( bg_configVars );

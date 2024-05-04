@@ -112,3 +112,13 @@ gfx/feedback/crosshairs/shotgun
 		rgbGen vertex
 	}
 }
+
+gfx/feedback/crosshairs/supershotgun
+{
+	nopicmip
+	{
+		map gfx/feedback/crosshairs/shotgun_d
+		blendfunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
