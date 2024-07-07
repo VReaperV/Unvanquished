@@ -495,6 +495,26 @@ public:
 		int           value;
 		playerState_t *ps = &cg.snap->ps;
 
+		weapon_t weapon = BG_PrimaryWeapon( cg.snap->ps.stats );
+
+		switch ( weapon ) {
+			case WP_ABUILD:
+			case WP_ABUILD2:
+			case WP_HBUILD: {
+					int totalBudget = cg.snap->ps.persistant[PERS_TOTALBUDGET];
+					int queuedBudget = cg.snap->ps.persistant[PERS_QUEUEDBUDGET];
+
+					float matchTime = ( float ) ( cg.time - cgs.levelStartTime );
+					float rate = cgs.buildPointRecoveryInitialRate /
+						std::pow( 2.0f, matchTime / ( 60000.0f * cgs.buildPointRecoveryRateHalfLife ) );
+					SetText( va( "%d/%d %.1f BP/m",
+						totalBudget - queuedBudget, totalBudget, rate ) );
+					return;
+				}
+			default:
+				break;
+		}
+
 		if ( BG_Weapon( BG_PrimaryWeapon( ps->stats ) )->infiniteAmmo )
 		{
 			if ( clips_ != -1 )
@@ -3059,6 +3079,63 @@ static void CG_DrawPlayerClipsStack()
 	CG_DrawStack( &rect, foreColor, 0.8, LALIGN_TOPLEFT, val, maxVal );
 }
 
+class HealthElement : public TextHudElement {
+	public:
+	HealthElement( const Rml::String& tag ) :
+		TextHudElement( tag, ELEMENT_HUMANS ) {
+	}
+
+	void DoOnUpdate() override {
+		rectDef_t      rect;
+		CG_GetRocketElementRect( &rect );
+
+		float x = rect.x;
+		float y = rect.y;
+
+		float w = rect.w;
+		float h = rect.h;
+
+		const float health = cg.snap->ps.stats[STAT_HEALTH];
+		const float maxHealth = BG_Class( cg.snap->ps.stats[STAT_CLASS] )->health;
+
+		uint rectCount = maxHealth / 20;
+		float healthPerRect = 20.0;
+		// rw * rc + rw * 0.8 * ( rc - 1 ) = w
+		// rw = w / ( rc + 0.8 * ( rc - 1 ) )
+		float gapCoeff = 0.2;
+		float rectWidth = w / ( rectCount + ( rectCount - 1 ) * gapCoeff );
+		float gapWidth = rectWidth * gapCoeff;
+		float rectX = x;
+		float healthFill = 0.0;
+
+		Color::Color foreColour, backColour;
+		Rocket_GetProperty( "cell-color", &backColour, sizeof( Color::Color ), rocketVarType_t::ROCKET_COLOR );
+		Color::Color highHealthColor = Color::Color( 0.5351, 0.9257, 0.9765, 0.8 );
+		Color::Color mediumHealthColorUpper = Color::Color( 0.5351, 0.9557, 0.5351, 0.8 );
+		Color::Color mediumHealthColorLower = Color::Color( 0.1851, 0.9557, 0.1851, 0.8 );
+		Color::Color lowHealthColorUpper = Color::Color( 0.9557, 0.1351, 0.1351, 0.8 );
+		Color::Color lowHealthColorLower = Color::Color( 1.0, 0.0, 0.0, 0.8 );
+		if ( health > maxHealth * 0.8 ) {
+			foreColour = Color::Color( 0.5351, 0.9257, 0.9765, 0.5 );
+		} else if ( health > maxHealth * 0.4 ) {
+			foreColour = Color::Blend( mediumHealthColorUpper, mediumHealthColorLower,
+									   ( maxHealth * 0.8 - health ) / ( maxHealth * 0.8 - maxHealth * 0.4 ) );
+		} else {
+			foreColour = Color::Blend( lowHealthColorUpper, lowHealthColorLower, ( maxHealth * 0.4 - health ) / ( maxHealth * 0.4 ) );
+		}
+		foreColour.SetAlpha( 0.8 );
+
+		for ( uint i = 0; i < rectCount; i++ ) {
+			healthFill += std::max( 0.0f, std::min( healthPerRect, health - healthFill ) );
+			CG_DrawRect( rectX, y, rectWidth, h, 1.0, backColour );
+			CG_FillRect( rectX + 1.0, y + 1.0, ( rectWidth - 2.0 ) * std::max( ( healthFill - i * healthPerRect ), 0.0f )
+											   / healthPerRect, h - 2.0, foreColour );
+
+			rectX += rectWidth + gapWidth;
+		}
+	}
+};
+
 static void CG_Rocket_DrawMinimap()
 {
 	if ( cg.minimap.defined && cg_drawMinimap.Get() )
@@ -3820,6 +3897,7 @@ void CG_Rocket_RegisterElements()
 	RegisterElement<EvosValueElement>( "evos" );
 	RegisterElement<WeaponIconElement>( "weapon_icon" );
 	RegisterElement<WallwalkElement>( "wallwalk" );
+	RegisterElement<HealthElement>( "health_stack" );
 	RegisterElement<StaminaElement>( "stamina" );
 	RegisterElement<UsableBuildableElement>( "usable_buildable" );
 	RegisterElement<LocationElement>( "location" );
