@@ -879,7 +879,7 @@ static void CG_RegisterGraphics()
 		vec3_t mins, maxs;
 		int    j;
 
-		Com_sprintf( name, sizeof( name ), "*%i", i );
+		Com_sprintf( name, sizeof( name ), "*%i", CM_InlineModel( i ) );
 
 		cgs.inlineDrawModel[ i ] = trap_R_RegisterModel( name );
 		trap_R_ModelBounds( cgs.inlineDrawModel[ i ], mins, maxs );

@@ -87,13 +87,33 @@ void G_CM_SetBrushModel( gentity_t *ent, const char *name )
 		Sys::Drop( "G_CM_SetBrushModel: %s of #%i isn't a brush model", name, ent->num() );
 	}
 
-	ent->s.modelindex = atoi( name + 1 );
+	uint32_t shift = 1;
+	bool mergedModel = false;
+	if( const char* c = Q_stristr( name, "|" ) ) {
+		shift = c - name + 1;
+		mergedModel = true;
+	}
+	Log::Warn( "%s %i", name, shift );
+
+	int index = atoi( name + shift );
+	if ( mergedModel ) {
+		std::string mapName( name + 1, shift - 2 );
+		ent->s.modelindex = CM_InlineBSPModel( mapName.c_str(), index );
+	} else {
+		ent->s.modelindex = atoi( name + shift );
+	}
 
 	h = CM_InlineModel( ent->s.modelindex );
 	CM_ModelBounds( h, mins, maxs );
 	VectorCopy( mins, ent->r.mins );
 	VectorCopy( maxs, ent->r.maxs );
 	ent->r.bmodel = true;
+
+	if ( mergedModel ) {
+		VectorAdd( ent->r.mins, ent->r.currentOrigin, ent->r.mins );
+		VectorAdd( ent->r.maxs, ent->r.currentOrigin, ent->r.maxs );
+		ent->r.svFlags |= SVF_SKIP_ABS_ORIGIN;
+	}
 
 	ent->r.contents = -1; // we don't know exactly what is in the brushes
 }
@@ -479,8 +499,13 @@ void G_CM_LinkEntity( gentity_t *gEnt )
 	}
 	else
 	{
-		VectorAdd( origin, gEnt->r.mins, gEnt->r.absmin );
-		VectorAdd( origin, gEnt->r.maxs, gEnt->r.absmax );
+		if( gEnt->r.svFlags & SVF_SKIP_ABS_ORIGIN ) {
+			VectorCopy( gEnt->r.mins, gEnt->r.absmin );
+			VectorCopy( gEnt->r.maxs, gEnt->r.absmax );
+		} else {
+			VectorAdd( origin, gEnt->r.mins, gEnt->r.absmin );
+			VectorAdd( origin, gEnt->r.maxs, gEnt->r.absmax );
+		}
 	}
 
 	// because movement is clipped an epsilon away from an actual edge,
