@@ -1367,6 +1367,7 @@ struct server_t
 {
 	char *name;
 	char *label;
+	char* version;
 	int clients;
 	int bots;
 	int ping;
