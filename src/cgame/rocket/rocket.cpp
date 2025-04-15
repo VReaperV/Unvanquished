@@ -71,6 +71,12 @@ public:
 	{
 		fileHandle_t fileHandle;
 		trap_FS_OpenPakFile( filePath.c_str(), fileHandle );
+
+		// Allows loading lua files from homepath/game/, rather than only from DPKs
+		if ( !fileHandle ) {
+			trap_FS_FOpenFile( filePath.c_str(), &fileHandle, fsMode_t::FS_READ );
+		}
+
 		return ( Rml::FileHandle )fileHandle;
 	}
 
@@ -347,6 +353,12 @@ void Rocket_RocketDebug_f()
 
 void Rocket_Lua_f( void )
 {
+	const std::string& first = CG_Argv( 1 );
+	if ( first == "-f" ) {
+		Rml::Lua::Interpreter::LoadFile( CG_Argv( 2 ) );
+		return;
+	}
+
 	Rml::Lua::Interpreter::DoString( CG_Argv( 1 ), "commandline" );
 }
 
