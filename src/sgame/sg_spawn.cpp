@@ -1001,6 +1001,8 @@ static bool G_ParseSpawnVars( const char** entString )
 	const char* entityString = *entString;
 	const char* token;
 
+	Sys::Drop( "test" );
+
 	// parse the opening brace
 	token = COM_Parse( &entityString );
 	if ( !token || token[0] == '\0' )
