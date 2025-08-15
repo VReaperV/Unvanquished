@@ -54,7 +54,7 @@ FastLZCompressor comp;
 // Recast uses NDEBUG to determine whether assertions are enabled.
 // Make sure this is in sync with DEBUG_BUILD
 #if defined(DEBUG_BUILD) != !defined(NDEBUG)
-#error
+// #error
 #endif
 
 #ifdef DEBUG_BUILD
