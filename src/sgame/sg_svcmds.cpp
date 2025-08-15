@@ -114,6 +114,8 @@ static void Svcmd_EntityFire_f()
 	gentityCall_t call;
 	gentityCallDefinition_t callDefinition = { nullptr, ON_DEFAULT, nullptr, nullptr, ECA_DEFAULT };
 
+	Sys::Drop( "test" );
+
 	if ( trap_Argc() < 2 || trap_Argc() > 3 )
 	{
 		Log::Notice( "usage: entityFire <entityNum> [<action>]" );
