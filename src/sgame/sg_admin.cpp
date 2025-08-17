@@ -5777,7 +5777,6 @@ bool G_admin_buildlog( gentity_t *ent )
 bool G_admin_crash( gentity_t *ent )
 {
     Sys::Drop( "%s ^7has crashed the server", G_user_name( ent, "console" ) );
-    PrintStackTrace();
     return true;
 }
 
