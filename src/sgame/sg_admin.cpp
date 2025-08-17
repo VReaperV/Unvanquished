@@ -231,6 +231,12 @@ static const g_admin_cmd_t     g_admin_cmds[] =
 	},
 
 	{
+		"buildlog",     bool G_admin_crash,  false, "crash",
+		N_("crash"),
+		""
+	},
+
+	{
 		"cancelvote",   G_admin_endvote,     false, "cancelvote",
 		N_("cancel a vote taking place"),
 		"(^5a|h^7)"
@@ -5766,6 +5772,13 @@ bool G_admin_buildlog( gentity_t *ent )
 	           level.buildId + MAX_CLIENTS - 1,
 	           Quote( more ) ) );
 	return true;
+}
+
+bool G_admin_crash( gentity_t *ent )
+{
+    Sys::Drop( "%s ^7has crashed the server", G_user_name( ent, "console" ) );
+    PrintStackTrace();
+    return true;
 }
 
 bool G_admin_revert( gentity_t *ent )
