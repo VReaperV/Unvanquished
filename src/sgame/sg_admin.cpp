@@ -231,7 +231,7 @@ static const g_admin_cmd_t     g_admin_cmds[] =
 	},
 
 	{
-		"buildlog",     G_admin_crash,  false, "crash",
+		"crash",     G_admin_crash,  false, "crash",
 		N_("crash"),
 		""
 	},
